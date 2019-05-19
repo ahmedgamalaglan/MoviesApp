@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase;
 
 import com.gemy.ahmed.tmas2.entities.Movie;
 
-@Database(entities = Movie.class, version = 1,exportSchema = false)
+@Database(entities = Movie.class, version = 2,exportSchema = false)
 public abstract class MoviesDataBase extends RoomDatabase {
 
     private static volatile MoviesDataBase Instance;

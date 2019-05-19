@@ -19,7 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MoviesRepo {
-
+    private static final String TAG = "MoviesRepo";
     private MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
     private MovieDao movieDao;
 
@@ -33,7 +33,7 @@ public class MoviesRepo {
         NetWorkUtils.getClient().getTopRatedMovies(Consts.API_KEY).enqueue(new Callback<List<Movie>>() {
             @Override
             public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
-                System.out.println(response.body().toString()+"==========================================");
+                Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
                 movies.postValue(response.body());
             }
 
@@ -53,6 +53,8 @@ public class MoviesRepo {
             @Override
             public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
                 movies.postValue(response.body());
+                Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
+
             }
 
             @Override
