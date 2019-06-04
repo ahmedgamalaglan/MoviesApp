@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -66,6 +67,12 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         trailersRecyclerView.setAdapter(trailersAdapter);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
         trailersRecyclerView.setHasFixedSize(true);
+        trailersRecyclerView.setVisibility(View.INVISIBLE);
+
+        movieViewModel.getTrailers(movie.getId()).observe(this, trailers -> {
+            assert trailers != null;
+            trailersAdapter.setTrailersList(trailers);
+        });
 
         reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView = findViewById(R.id.rv_reviews_recyclerview);
@@ -73,22 +80,20 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         reviewsRecyclerView.setAdapter(reviewsAdapter);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         reviewsRecyclerView.setHasFixedSize(true);
-
+        reviewsRecyclerView.setVisibility(View.INVISIBLE);
+        movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
+            assert reviews != null;
+            Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
+            reviewsAdapter.setReviewsList(reviews);
+        });
 
         movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
         viewTrailers.setOnClickListener(v -> {
-            movieViewModel.getTrailers(movie.getId()).observe(this, trailers -> {
-                assert trailers != null;
-                trailersAdapter.setTrailersList(trailers);
-            });
+            trailersRecyclerView.setVisibility(View.VISIBLE);
         });
         viewReviews.setOnClickListener(v -> {
-            movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
-                assert reviews != null;
-                Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
-                reviewsAdapter.setReviewsList(reviews);
-            });
+            reviewsRecyclerView.setVisibility(View.VISIBLE);
         });
 
 

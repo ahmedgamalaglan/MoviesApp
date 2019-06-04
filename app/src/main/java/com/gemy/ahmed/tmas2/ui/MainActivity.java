@@ -133,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
                         Log.d(TAG, "showFavoriteMovies: is null");
                         hideProgressBar();
                         actionBar.setTitle(getResources().getString(R.string.favorite));
-                        showNoMoviesError();
+                        showNoFavoriteMoviesError();
                     }
                 });
     }
 
-    private void showNoMoviesError() {
+    private void showNoFavoriteMoviesError() {
         progressBar.setVisibility(View.INVISIBLE);
         connectionError.setText("No Favorite Movies Found");
         connectionError.setVisibility(View.VISIBLE);
