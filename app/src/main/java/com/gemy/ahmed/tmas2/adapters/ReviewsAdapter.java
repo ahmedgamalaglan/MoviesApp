@@ -21,15 +21,16 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
     @NonNull
     @Override
     public ReviewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.review_item, parent, false);
         return new ReviewsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReviewsViewHolder holder, int position) {
-        Review.Reviews currentReview = reviewsList.get(position);
-        holder.reviewName.setText(currentReview.getAuthor());
-        holder.reviewText.setText(currentReview.getContent());
+        //Review.Reviews currentReview = reviewsList.get(position);
+        holder.reviewName.setText(reviewsList.get(position).getAuthor());
+        holder.reviewText.setText(reviewsList.get(position).getContent());
     }
 
     @Override

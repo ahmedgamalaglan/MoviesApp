@@ -79,13 +79,15 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
 
         viewTrailers.setOnClickListener(v -> {
             movieViewModel.getTrailers(movie.getId()).observe(this, trailers -> {
+                assert trailers != null;
                 trailersAdapter.setTrailersList(trailers);
             });
         });
         viewReviews.setOnClickListener(v -> {
             movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
-                Toast.makeText(this, ""+reviews.size(), Toast.LENGTH_LONG).show();
-//                reviewsAdapter.setReviewsList(reviews);
+                assert reviews!=null;
+                Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
+                reviewsAdapter.setReviewsList(reviews);
             });
         });
 
