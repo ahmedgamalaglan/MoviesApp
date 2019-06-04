@@ -85,14 +85,17 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         });
         viewReviews.setOnClickListener(v -> {
             movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
-                assert reviews!=null;
+                assert reviews != null;
                 Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
                 reviewsAdapter.setReviewsList(reviews);
             });
         });
 
 
-        addToFavorite.setOnClickListener(v -> movieViewModel.addToFavorite(movie));
+        addToFavorite.setOnClickListener(v -> {
+            movieViewModel.addToFavorite(movie);
+            Toast.makeText(this, "Add To Favorite", Toast.LENGTH_LONG).show();
+        });
     }
 
     private void initComponents() {
