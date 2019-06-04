@@ -1,7 +1,17 @@
 <resources>
     <string name="app_name">Movies App</string>
-    <string name="top_rated">Top Rated</string>
-    <string name="popular">Popular</string>
-    <string name="favorite">Favorite</string>
+    <string name="top_rated">Top Rated Movies</string>
+    <string name="popular">Popular Movies</string>
+    <string name="favorite">Favorite Movies</string>
     <string name="no_internet">Connection Error</string>
+    <string name="movie_title">Movie Title</string>
+    <string name="release_date">Release Date</string>
+    <string name="movie_review">Review</string>
+    <string name="rating">Rating</string>
+    <string name="add_to_favorite">Favorite</string>
+    <string name="release_at">Released at :</string>
+    <string name="review">Review</string>
+    <string name="name">Name</string>
+    <string name="reviews">Reviews</string>
+    <string name="trailers">Trailers</string>
 </resources>

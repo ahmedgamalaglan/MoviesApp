@@ -1,14 +1,20 @@
 package com.gemy.ahmed.tmas2.entities;
 
-import androidx.annotation.NonNull;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(tableName = "movies_table")
-public class Movie {
+public class Movie implements Parcelable {
 
     public Movie(int id, String overview, String title, double vote_average, String poster_path, String release_date) {
         this.id = id;
@@ -19,7 +25,6 @@ public class Movie {
         this.release_date = release_date;
     }
 
-    @NonNull
     @PrimaryKey
     @SerializedName("id")
     @Expose
@@ -44,6 +49,37 @@ public class Movie {
     @SerializedName("release_date")
     @Expose
     private String release_date;
+
+    @Ignore
+    @SerializedName("results")
+    @Expose
+    private List<Movie> results = new ArrayList<>();
+
+    protected Movie(Parcel in) {
+        id = in.readInt();
+        overview = in.readString();
+        title = in.readString();
+        vote_average = in.readDouble();
+        poster_path = in.readString();
+        release_date = in.readString();
+        results = in.createTypedArrayList(Movie.CREATOR);
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    public List<Movie> getResults() {
+        return results;
+    }
 
     public int getId() {
         return id;
@@ -70,4 +106,19 @@ public class Movie {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(overview);
+        dest.writeString(title);
+        dest.writeDouble(vote_average);
+        dest.writeString(poster_path);
+        dest.writeString(release_date);
+        dest.writeTypedList(results);
+    }
 }

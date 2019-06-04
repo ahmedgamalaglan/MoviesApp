@@ -1,12 +1,16 @@
 package com.gemy.ahmed.tmas2.ui;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -14,40 +18,65 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gemy.ahmed.tmas2.R;
 import com.gemy.ahmed.tmas2.adapters.MoviesAdapter;
-import com.gemy.ahmed.tmas2.viewmodels.MoviesViewModel;
+import com.gemy.ahmed.tmas2.entities.Movie;
+import com.gemy.ahmed.tmas2.utilities.network.NetWorkUtils;
+import com.gemy.ahmed.tmas2.viewmodels.MoviesListViewModel;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnListItemClickListener {
 
-    private MoviesViewModel moviesViewModel;
+    private static final String TAG = "Main";
+    private MoviesListViewModel moviesListViewModel;
     private MoviesAdapter moviesAdapter;
     private ProgressBar progressBar;
     private TextView connectionError;
+    private ActionBar actionBar;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        actionBar = getSupportActionBar();
         progressBar = findViewById(R.id.pb_progress_bar);
         connectionError = findViewById(R.id.tv_connection_error);
-        setRecyclerView();
 
-        moviesViewModel = ViewModelProviders.of(this).get(MoviesViewModel.class);
-        moviesViewModel.getPopularMovies().observe(this, movies -> {
-            connectionError.setText(movies.size()+"===============================");
-            connectionError.setVisibility(View.VISIBLE);
-            moviesAdapter.setMovies(movies);
+        recyclerView = findViewById(R.id.rv_movies_recycler_view);
+        moviesAdapter = new MoviesAdapter(this);
+        recyclerView.setAdapter(moviesAdapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, getSpanCount()));
+        recyclerView.setHasFixedSize(true);
 
-        });
+
+        moviesListViewModel = ViewModelProviders.of(this).get(MoviesListViewModel.class);
+        if (NetWorkUtils.isOnline(this)) {
+            showPopularMovies();
+        } else showConnectionError();
 
     }
 
-    private void setRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.rv_movies_recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        moviesAdapter = new MoviesAdapter(this);
-        recyclerView.setAdapter(moviesAdapter);
+
+    int getSpanCount() {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            return 2;
+        else
+            return 4;
+
+    }
+
+    private void showConnectionError() {
+        progressBar.setVisibility(View.INVISIBLE);
+        connectionError.setText("Connection Error");
+        connectionError.setVisibility(View.VISIBLE);
+    }
+
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        connectionError.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -60,18 +89,67 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.favorite:
-                moviesViewModel.getFavoriteMovies().observe(this, movies -> {
-                    moviesAdapter.setMovies(movies);
-                });
+                showFavoriteMovies();
+                break;
             case R.id.popular:
-                moviesViewModel.getPopularMovies().observe(this, movies -> {
-                    moviesAdapter.setMovies(movies);
-                });
+                showPopularMovies();
+                break;
             case R.id.top_rated:
-                moviesViewModel.getTopRatedMovies().observe(this, movies -> {
-                    moviesAdapter.setMovies(movies);
-                });
+                showRatedMovies();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showRatedMovies() {
+        showProgressBar();
+        moviesListViewModel.getRatedMovies()
+                .observe(this, movies -> {
+                    moviesAdapter.setMovies(movies);
+                    hideProgressBar();
+                    actionBar.setTitle(getResources().getString(R.string.top_rated));
+                });
+    }
+
+    private void showPopularMovies() {
+        showProgressBar();
+        moviesListViewModel.getPopularMovies()
+                .observe(this, movies -> {
+                    moviesAdapter.setMovies(movies);
+                    hideProgressBar();
+                    actionBar.setTitle(getResources().getString(R.string.popular));
+                });
+    }
+
+    private void showFavoriteMovies() {
+        showProgressBar();
+        moviesListViewModel.getFavoriteMovies()
+                .observe(this, movies -> {
+                    if (movies != null) {
+                        Log.d(TAG, "showFavoriteMovies: is not null");
+                        moviesAdapter.setMovies(movies);
+                        Log.d(TAG, "showFavoriteMovies: " + movies.size());
+                    } else {
+                        Log.d(TAG, "showFavoriteMovies: is null");
+                        hideProgressBar();
+                        actionBar.setTitle(getResources().getString(R.string.favorite));
+                        showNoMoviesError();
+                    }
+                });
+    }
+
+    private void showNoMoviesError() {
+        progressBar.setVisibility(View.INVISIBLE);
+        connectionError.setText("No Favorite Movies Found");
+        connectionError.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onItemClick(Movie movie) {
+        if (movie != null) {
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra("Movie", movie);
+            startActivity(intent);
+        }
     }
 }

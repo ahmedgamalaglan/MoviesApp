@@ -1,6 +1,5 @@
 package com.gemy.ahmed.tmas2.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +18,19 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
-    private List<Movie> movies;
-    Context c;
+    private List<Movie> movies = new ArrayList<>();
+    private OnListItemClickListener onListItemClickListener;
 
-    public MoviesAdapter(Context context) {
-        movies = new ArrayList<>();
-        this.c = context;
+    public MoviesAdapter(OnListItemClickListener listener) {
+        this.onListItemClickListener = listener;
     }
 
     @NonNull
     @Override
     public MoviesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(c).inflate(R.layout.movie_item, parent, false);
+        View view = LayoutInflater.
+                from(parent.getContext())
+                .inflate(R.layout.movie_item, parent, false);
         return new MoviesViewHolder(view);
     }
 
@@ -41,6 +41,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
     @Override
     public int getItemCount() {
+        if (movies == null)
+            return 0;
         return movies.size();
     }
 
@@ -49,13 +51,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         notifyDataSetChanged();
     }
 
-    class MoviesViewHolder extends RecyclerView.ViewHolder {
+    class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView imageView;
 
-        public MoviesViewHolder(@NonNull View itemView) {
+        private MoviesViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.iv_movie_item);
+            itemView.setOnClickListener(this);
         }
 
         void bind(int index) {
@@ -63,5 +66,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                     .load(Consts.IMAGE_BASE_URL + movies.get(index).getPoster_path())
                     .into(imageView);
         }
+
+        @Override
+        public void onClick(View v) {
+            int itemPosition = getAdapterPosition();
+            Movie movie = movies.get(itemPosition);
+            onListItemClickListener.onItemClick(movie);
+
+        }
+    }
+
+
+    public interface OnListItemClickListener {
+        void onItemClick(Movie movie);
     }
 }

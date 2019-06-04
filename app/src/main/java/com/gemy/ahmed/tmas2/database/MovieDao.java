@@ -1,4 +1,4 @@
-package com.gemy.ahmed.tmas2.db;
+package com.gemy.ahmed.tmas2.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -20,7 +20,7 @@ public interface MovieDao {
     LiveData<Movie> getMovie(int id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertMovie(List<Movie> movies);
+    void insertMovie(Movie movie);
 
     @Query("DELETE FROM movies_table")
     void deleteAllMovies();
