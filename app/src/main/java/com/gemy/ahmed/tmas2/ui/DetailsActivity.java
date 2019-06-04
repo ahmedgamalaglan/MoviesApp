@@ -69,7 +69,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         trailersRecyclerView.setAdapter(trailersAdapter);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
         trailersRecyclerView.setHasFixedSize(true);
-        trailersRecyclerView.setVisibility(View.INVISIBLE);
+        trailersRecyclerView.setVisibility(View.GONE);
 
         movieViewModel.getTrailers(movie.getId()).observe(this, trailers -> {
             assert trailers != null;
@@ -82,7 +82,7 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         reviewsRecyclerView.setAdapter(reviewsAdapter);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         reviewsRecyclerView.setHasFixedSize(true);
-        reviewsRecyclerView.setVisibility(View.INVISIBLE);
+        reviewsRecyclerView.setVisibility(View.GONE);
         movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
             assert reviews != null;
             Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
