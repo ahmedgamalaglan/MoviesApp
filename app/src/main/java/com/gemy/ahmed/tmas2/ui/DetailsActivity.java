@@ -61,6 +61,8 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         viewTrailers = findViewById(R.id.trailers);
         viewReviews = findViewById(R.id.reviews);
 
+        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+
         trailersLayoutManager = new LinearLayoutManager(this);
         trailersRecyclerView = findViewById(R.id.rv_trailers_recyclerview);
         trailersAdapter = new TrailersAdapter(this);
@@ -87,7 +89,6 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
             reviewsAdapter.setReviewsList(reviews);
         });
 
-        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
 
         viewTrailers.setOnClickListener(v -> {
             trailersRecyclerView.setVisibility(View.VISIBLE);
