@@ -39,6 +39,7 @@ public class MoviesRepo {
                 movies.postValue(response.body().getResults());
                 Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
             }
+
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
@@ -55,6 +56,7 @@ public class MoviesRepo {
                 movies.postValue(response.body().getResults());
                 Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
             }
+
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
@@ -64,9 +66,10 @@ public class MoviesRepo {
     }
 
     public LiveData<List<Movie>> getFavoriteMovies() {
-        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
-        movies.postValue(movieDao.getMovies().getValue());
-        return movies;
+//        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
+//        movies.postValue(movieDao.getMovies().getValue());
+//        return movies;
+        return movieDao.getMovies();
     }
 
     public void InsertMovie(Movie movie) {

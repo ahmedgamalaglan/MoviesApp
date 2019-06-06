@@ -75,10 +75,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
         connectionError.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE
+        );
     }
 
     private void hideProgressBar() {
         progressBar.setVisibility(View.INVISIBLE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -105,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
 
     private void showRatedMovies() {
         showProgressBar();
+        actionBar.setTitle(getResources().getString(R.string.top_rated));
         List<Movie> ratedMovies = moviesListViewModel.getRatedMovies().getValue();
         if (ratedMovies != null) {
             Log.d(TAG, "showRatedMovies: is not null");
@@ -116,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
                     .observe(this, movies -> {
                         moviesAdapter.setMovies(movies);
                         hideProgressBar();
-                        actionBar.setTitle(getResources().getString(R.string.top_rated));
                     });
         }
 
@@ -124,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
 
     private void showPopularMovies() {
         showProgressBar();
+        actionBar.setTitle(getResources().getString(R.string.popular));
         List<Movie> popMovies = moviesListViewModel.getPopularMovies().getValue();
         if (popMovies != null) {
             Log.d(TAG, "showpopMovies: is not null");
@@ -135,25 +139,28 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
                     .observe(this, movies -> {
                         moviesAdapter.setMovies(movies);
                         hideProgressBar();
-                        actionBar.setTitle(getResources().getString(R.string.popular));
                     });
         }
     }
 
     private void showFavoriteMovies() {
         showProgressBar();
+        actionBar.setTitle(getResources().getString(R.string.favorite));
         List<Movie> favMovies = moviesListViewModel.getFavoriteMovies().getValue();
         if (favMovies != null) {
+            Log.d(TAG, "showFavoriteMovies: is not null" + favMovies.size());
             moviesAdapter.setMovies(favMovies);
             hideProgressBar();
         } else {
+            Log.d(TAG, "showFavoriteMovies: is null");
             moviesListViewModel.getFavoriteMovies()
                     .observe(this, movies -> {
                         if (movies != null) {
+                            Log.d(TAG, "showFavoriteMovies: observed is not null "+movies.toString());
                             moviesAdapter.setMovies(movies);
                         } else {
+                            Log.d(TAG, "showFavoriteMovies:  obbserved is null");
                             hideProgressBar();
-                            actionBar.setTitle(getResources().getString(R.string.favorite));
                             showNoFavoriteMoviesError();
                         }
                     });
@@ -163,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
     private void showNoFavoriteMoviesError() {
         progressBar.setVisibility(View.INVISIBLE);
         connectionError.setText("No Favorite Movies Found");
+        recyclerView.setVisibility(View.INVISIBLE);
         connectionError.setVisibility(View.VISIBLE);
     }
 
