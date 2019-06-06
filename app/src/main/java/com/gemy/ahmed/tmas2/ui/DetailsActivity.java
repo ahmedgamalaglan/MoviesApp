@@ -85,7 +85,6 @@ public class DetailsActivity extends AppCompatActivity implements TrailersAdapte
         reviewsRecyclerView.setVisibility(View.GONE);
         movieViewModel.getReviews(movie.getId()).observe(this, reviews -> {
             assert reviews != null;
-            Toast.makeText(this, "" + reviews.size(), Toast.LENGTH_LONG).show();
             reviewsAdapter.setReviewsList(reviews);
         });
 

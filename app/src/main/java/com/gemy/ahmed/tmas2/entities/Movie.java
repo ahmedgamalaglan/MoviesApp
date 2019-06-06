@@ -16,6 +16,7 @@ import java.util.List;
 @Entity(tableName = "movies_table")
 public class Movie implements Parcelable {
 
+
     public Movie(int id, String overview, String title, double vote_average, String poster_path, String release_date) {
         this.id = id;
         this.overview = overview;

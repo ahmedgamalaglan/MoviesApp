@@ -22,6 +22,8 @@ import com.gemy.ahmed.tmas2.entities.Movie;
 import com.gemy.ahmed.tmas2.utilities.network.NetWorkUtils;
 import com.gemy.ahmed.tmas2.viewmodels.MoviesListViewModel;
 
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnListItemClickListener {
 
@@ -88,14 +90,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.favorite:
-                showFavoriteMovies();
+            case R.id.top_rated:
+                showRatedMovies();
                 break;
             case R.id.popular:
                 showPopularMovies();
                 break;
-            case R.id.top_rated:
-                showRatedMovies();
+            case R.id.favorite:
+                showFavoriteMovies();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -103,39 +105,59 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
 
     private void showRatedMovies() {
         showProgressBar();
-        moviesListViewModel.getRatedMovies()
-                .observe(this, movies -> {
-                    moviesAdapter.setMovies(movies);
-                    hideProgressBar();
-                    actionBar.setTitle(getResources().getString(R.string.top_rated));
-                });
+        List<Movie> ratedMovies = moviesListViewModel.getRatedMovies().getValue();
+        if (ratedMovies != null) {
+            Log.d(TAG, "showRatedMovies: is not null");
+            moviesAdapter.setMovies(ratedMovies);
+            hideProgressBar();
+        } else {
+            Log.d(TAG, "showRatedMovies: is null");
+            moviesListViewModel.getRatedMovies()
+                    .observe(this, movies -> {
+                        moviesAdapter.setMovies(movies);
+                        hideProgressBar();
+                        actionBar.setTitle(getResources().getString(R.string.top_rated));
+                    });
+        }
+
     }
 
     private void showPopularMovies() {
         showProgressBar();
-        moviesListViewModel.getPopularMovies()
-                .observe(this, movies -> {
-                    moviesAdapter.setMovies(movies);
-                    hideProgressBar();
-                    actionBar.setTitle(getResources().getString(R.string.popular));
-                });
+        List<Movie> popMovies = moviesListViewModel.getPopularMovies().getValue();
+        if (popMovies != null) {
+            Log.d(TAG, "showpopMovies: is not null");
+            moviesAdapter.setMovies(popMovies);
+            hideProgressBar();
+        } else {
+            Log.d(TAG, "showPopularMovies: is null");
+            moviesListViewModel.getPopularMovies()
+                    .observe(this, movies -> {
+                        moviesAdapter.setMovies(movies);
+                        hideProgressBar();
+                        actionBar.setTitle(getResources().getString(R.string.popular));
+                    });
+        }
     }
 
     private void showFavoriteMovies() {
         showProgressBar();
-        moviesListViewModel.getFavoriteMovies()
-                .observe(this, movies -> {
-                    if (movies != null) {
-                        Log.d(TAG, "showFavoriteMovies: is not null");
-                        moviesAdapter.setMovies(movies);
-                        Log.d(TAG, "showFavoriteMovies: " + movies.size());
-                    } else {
-                        Log.d(TAG, "showFavoriteMovies: is null");
-                        hideProgressBar();
-                        actionBar.setTitle(getResources().getString(R.string.favorite));
-                        showNoFavoriteMoviesError();
-                    }
-                });
+        List<Movie> favMovies = moviesListViewModel.getFavoriteMovies().getValue();
+        if (favMovies != null) {
+            moviesAdapter.setMovies(favMovies);
+            hideProgressBar();
+        } else {
+            moviesListViewModel.getFavoriteMovies()
+                    .observe(this, movies -> {
+                        if (movies != null) {
+                            moviesAdapter.setMovies(movies);
+                        } else {
+                            hideProgressBar();
+                            actionBar.setTitle(getResources().getString(R.string.favorite));
+                            showNoFavoriteMoviesError();
+                        }
+                    });
+        }
     }
 
     private void showNoFavoriteMoviesError() {

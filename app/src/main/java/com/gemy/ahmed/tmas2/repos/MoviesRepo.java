@@ -24,52 +24,48 @@ import retrofit2.Response;
 public class MoviesRepo {
 
     private static final String TAG = "MoviesRepo";
-    private MutableLiveData<List<Movie>> movies;
     private MovieDao movieDao;
 
     public MoviesRepo(Application application) {
         movieDao = MoviesDataBase.getInstance(application.getApplicationContext()).movieDao();
-        movies = new MutableLiveData<>();
+
     }
 
     public LiveData<List<Movie>> getRatedMovies() {
+        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
         NetWorkUtils.getClient().getRatedMovies(Consts.API_KEY).enqueue(new Callback<Movie>() {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 movies.postValue(response.body().getResults());
                 Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
             }
-
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
             }
         });
-
         return movies;
     }
 
     public LiveData<List<Movie>> getPopularMovies() {
+        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
         NetWorkUtils.getClient().getPopularMovies(Consts.API_KEY).enqueue(new Callback<Movie>() {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 movies.postValue(response.body().getResults());
                 Log.d(TAG, "onResponse: " + response.body().toString() + "==========================================");
             }
-
             @Override
             public void onFailure(Call<Movie> call, Throwable t) {
                 Log.d(TAG, "onFailure: ");
             }
         });
-
         return movies;
     }
 
     public LiveData<List<Movie>> getFavoriteMovies() {
-
+        final MutableLiveData<List<Movie>> movies = new MutableLiveData<>();
         movies.postValue(movieDao.getMovies().getValue());
-
         return movies;
     }
 
