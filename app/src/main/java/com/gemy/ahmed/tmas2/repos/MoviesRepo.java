@@ -28,7 +28,6 @@ public class MoviesRepo {
 
     public MoviesRepo(Application application) {
         movieDao = MoviesDataBase.getInstance(application.getApplicationContext()).movieDao();
-
     }
 
     public LiveData<List<Movie>> getRatedMovies() {

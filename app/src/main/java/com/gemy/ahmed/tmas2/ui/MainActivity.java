@@ -1,5 +1,6 @@
 package com.gemy.ahmed.tmas2.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void showConnectionError() {
         progressBar.setVisibility(View.INVISIBLE);
         connectionError.setText("Connection Error");
@@ -115,12 +117,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
             moviesAdapter.setMovies(ratedMovies);
             hideProgressBar();
         } else {
-            Log.d(TAG, "showRatedMovies: is null");
-            moviesListViewModel.getRatedMovies()
-                    .observe(this, movies -> {
-                        moviesAdapter.setMovies(movies);
-                        hideProgressBar();
-                    });
+            if (NetWorkUtils.isOnline(this)) {
+                Log.d(TAG, "showRatedMovies: is null");
+                moviesListViewModel.getRatedMovies()
+                        .observe(this, movies -> {
+                            moviesAdapter.setMovies(movies);
+                            hideProgressBar();
+                        });
+            }else showConnectionError();
         }
 
     }
@@ -134,14 +138,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
             moviesAdapter.setMovies(popMovies);
             hideProgressBar();
         } else {
-            Log.d(TAG, "showPopularMovies: is null");
-            moviesListViewModel.getPopularMovies()
-                    .observe(this, movies -> {
-                        moviesAdapter.setMovies(movies);
-                        hideProgressBar();
-                    });
+            if (NetWorkUtils.isOnline(this)) {
+
+                Log.d(TAG, "showPopularMovies: is null");
+                moviesListViewModel.getPopularMovies()
+                        .observe(this, movies -> {
+                            moviesAdapter.setMovies(movies);
+                            hideProgressBar();
+                        });
+            }else showConnectionError();
         }
     }
+
 
     private void showFavoriteMovies() {
         showProgressBar();
@@ -156,10 +164,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
             moviesListViewModel.getFavoriteMovies()
                     .observe(this, movies -> {
                         if (movies != null) {
-                            Log.d(TAG, "showFavoriteMovies: observed is not null "+movies.toString());
-                            moviesAdapter.setMovies(movies);
+                            Log.d(TAG, "showFavoriteMovies: observed is not null " +movies.size()+ movies.toString());
+                            //moviesAdapter.setMovies(movies);
                         } else {
-                            Log.d(TAG, "showFavoriteMovies:  obbserved is null");
+                            Log.d(TAG, "showFavoriteMovies:  observed is null");
                             hideProgressBar();
                             showNoFavoriteMoviesError();
                         }
@@ -167,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.OnL
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void showNoFavoriteMoviesError() {
         progressBar.setVisibility(View.INVISIBLE);
         connectionError.setText("No Favorite Movies Found");
